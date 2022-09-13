@@ -1,27 +1,32 @@
 # node_task
+
 1. Clone repo into your github
-2. Use https://expressjs.com/
-3. Use this library to connect to mysql https://sequelize.org/
-4. Integrate the following api into this project 
+2. Create a page on route / that match the figma file https://www.figma.com/file/wDRDYmVG1qZI3qff32631b/Untitled?node-id=0%3A1
+3. Call the weather api https://www.weatherapi.com/pricing.aspx to show the temperature in celsius and draw a sun if sunny. If its raining show clouds (choose an image from google). If its snowing, choose a snowflake image from google. This widget should update every 5 minute calling teh weather api.
+4. Given the current UTC time, create 4 time widget where you convert the UTC time to local time of london, EST, Nigeria and Pakistan time.
+5. Create a widget that call autocomplete api /airports?search= that dropdown the airports that match the search terms partially. Minimum number of character to trigger autocomplete is 3.
+6. Show map widget for airport chosen using latitude and longitude from autocomplete chosen airport. Use this map api https://openlayers.org/doc/quickstart.html
+7. Create a widget that calculate the distance from artic circle to airport https://stackoverflow.com/questions/27928/calculate-distance-between-two-latitude-longitude-points-haversine-formula
 
-https://www.weatherapi.com/pricing.aspx 
+8. Use bootstrap 4 for ui
 
-https://github.com/stripe/stripe-php
+9. Create db table called analytic (id, create_at, widget_name, browser_type, ). Everytime user clicks on a widget, call api /analytic and send the widget name to log it in the db.
 
-5. Create your own airport api to retrieve from the autocomplete below. We have given you an airport.csv to use to get the data fields.
+10. Number of Click widget call an api every minute that count the # of rows in analytic
 
-6. Use bootstrap 4 for ui
+11. Create widget export xml that will export the analytic database as xml file.
 
-7. Make the following page by end of day, no exceptions:
-- Make a main page where we we call an api to get current weather in your country and display it on frontend (degree, the type of weather, humidity)
-- Make an 2 autocomplete dropdown where we call airport api where we filter by country and show the airports in the dropdown 
-- Calculate the distance between the 2 airports using the lat and lng and multiple it by $10. Make a stripe form to ask user to pay that amount. Payment must be processed.
-- Save the order placed into an order database table (id, from_airport, from_country, to_airport, to_country, total, stripe_id, status(paid, failed))
-- Create thank you page showing their order in a table
+12. Query https://www.reddit.com/r/programming.json and create a reddit widget where we show the top 4 even post as cards in the widget (title, link, who posted it)
 
+13. Count # of coin widget. Once user type in a money amount, and click calculate, we show how many bills to add up to the money amount. The bills allowed are: $20 bill, $10 bill, $5 bill, $1 bill, $25 cent, $10 cent, $5 cent, $1 cent.
 
+14. Rate limit analytic api to only be able to be called 10 times a minute.
 
-Stripe key: 
+15. Create upload widget where we upload image to server. Save image to db table. Always show the latest image uploaded above upload button.
+
+16. Read this documentation https://www.npmjs.com/package/speakeasy and implement a modal popup that blocks the dashboard. Unless 2FA is verified, cannot see dashboard.
+
+Stripe key:
 
 pk_test_51IWQUwH8oljXErmdg6L4MhsuB6tDdmumlHFfyNaopty2U27pmRcqMX1c868zn838lGQtU1eYV6bKRSQtMFWf36VT00aNsvnTOE
 
