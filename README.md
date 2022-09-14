@@ -3,7 +3,7 @@
 1. Clone repo into your github
 2. Create a page on route / that match the figma file https://www.figma.com/file/wDRDYmVG1qZI3qff32631b/Untitled?node-id=0%3A1
 3. Call the weather api https://www.weatherapi.com/pricing.aspx to show the temperature in celsius and draw a sun if sunny. If its raining show clouds (choose an image from google). If its snowing, choose a snowflake image from google. This widget should update every 5 minute calling teh weather api.
-4. Given the current UTC time, create 4 time widget where you convert the UTC time to local time of london, EST, Nigeria and Pakistan time.
+4. Given the current UTC time, create 4 time widget where you convert the UTC time to local time of london, EST, Nigeria and Pakistan time. Every second, the time should be updated like regular clock.
 5. Create a widget that call autocomplete api /airports?search= that dropdown the airports that match the search terms partially. Minimum number of character to trigger autocomplete is 3.
 6. Show map widget for airport chosen using latitude and longitude from autocomplete chosen airport. Use this map api https://openlayers.org/doc/quickstart.html
 7. Create a widget that calculate the distance from artic circle to airport https://stackoverflow.com/questions/27928/calculate-distance-between-two-latitude-longitude-points-haversine-formula
