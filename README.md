@@ -26,6 +26,21 @@
 
 16. Read this documentation https://www.npmjs.com/package/speakeasy and implement a modal popup that blocks the dashboard. Unless 2FA is verified, cannot see dashboard.
 
+17. Implement a single long polling chat. Here's a document explaining it
+
+https://www.enjoyalgorithms.com/blog/long-polling-in-system-design
+
+https://javascript.info/long-polling
+
+https://www.technouz.com/4879/long-polling-explained-with-an-example/
+
+In demo what should happen:
+If I open 2 browsers to /chat, both users should connect to chat room. Use redis to store state of chatroom.
+Have basic html ui showing the chat log using UL and single input box with send button to send messages.
+When I type a message in send message, call /send POST api to send message to backend. The chat room is updated with new message.
+All client browsers have an api called /poll that check if chat room on redis is updated. If updated, it will return 200 and frontend
+need to call GET /chat/all to pull all the messages in chat room which you will update the UL. Have a button called save where it will save the current chat room chat messages to database table chat with fields (id, create_at, chat_messages).
+
 Stripe key:
 
 pk_test_51IWQUwH8oljXErmdg6L4MhsuB6tDdmumlHFfyNaopty2U27pmRcqMX1c868zn838lGQtU1eYV6bKRSQtMFWf36VT00aNsvnTOE
