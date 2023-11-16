@@ -1,3 +1,5 @@
+# This project is a toy project for training and quality assurance purposes
+
 # node_task
 
 1. Clone repo into your github

@@ -3,7 +3,8 @@
   "version": "0.0.0",
   "private": true,
   "scripts": {
-    "start": "node ./bin/www"
+    "start": "node ./bin/www",
+    "commit": "git add . && git commit -m \"Update Project purpose\" && git push"
   },
   "dependencies": {
     "cookie-parser": "~1.4.4",
