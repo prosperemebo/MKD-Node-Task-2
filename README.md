@@ -10,7 +10,7 @@
 6. Show map widget for airport chosen using latitude and longitude from autocomplete chosen airport. Use this map api https://openlayers.org/doc/quickstart.html
 7. Create a widget that calculate the distance from artic circle to airport https://stackoverflow.com/questions/27928/calculate-distance-between-two-latitude-longitude-points-haversine-formula
 
-8. Use bootstrap 4 for ui
+8. Use bootstrap 4/tailwindcss for ui
 
 9. Create db table called analytic (id, create_at, widget_name, browser_type, ). Everytime user clicks on a widget, call api /analytic and send the widget name to log it in the db.
 
@@ -35,6 +35,12 @@ https://www.enjoyalgorithms.com/blog/long-polling-in-system-design
 https://javascript.info/long-polling
 
 https://www.technouz.com/4879/long-polling-explained-with-an-example/
+
+Redis:
+
+https://redis.io/docs/connect/clients/nodejs/
+
+https://www.npmjs.com/package/redis
 
 In demo what should happen:
 If I open 2 browsers to /chat, both users should connect to chat room. Use redis to store state of chatroom.
