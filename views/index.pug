@@ -1,5 +1,118 @@
 extends layout
 
 block content
-  h1= title
-  p Welcome to #{title}
+  .grid.grid-cols-4.gap-8
+    div
+      .w-full.bg-white.rounded.mb-8.p-8.flex.flex-col.justify-center.items-center
+        img#weatherIcon.mb-6.w-64.h-64(src=weatherIcon alt=weatherDescription)
+        h1#temperature.text-4xl.text-center.font-medium #{temperature} ˚C
+      .w-full.bg-white.rounded.mb-8.text-center.p-8
+        p.text-xl.mb-6 Number of clicks
+        h1.text-6xl.text-center.font-medium 456
+      .w-full.p-8.bg-white.rounded.mb-8.text-center
+        p.text-xl.mb-6 Export XML
+        button.w-full.inline-flex.items-center.justify-center.h-12.px-6.font-medium.tracking-wide.text-white.transition.duration-200.bg-sky-900.rounded-lg.hover--bg-sky-800.focus--shadow-outline.focus--outline-none(href='#').
+          Export XML
+
+    div
+      .w-full.p-8.bg-white.rounded.mb-8.text-center
+        button#dropdownSearchButton.w-full.flex.justify-center.text-white.bg-sky-900.hover--bg-sky-800.focus--ring-4.focus--outline-none.focus--ring-sky-300.font-medium.rounded-lg.text-sm.px-5.py-2.text-center.inline-flex.items-center.dark--bg-sky-600.dark--hover--bg-sky-700.dark--focus--ring-sky-800(data-dropdown-toggle='dropdownSearch' data-dropdown-placement='bottom' type='button')
+          | Select Airport
+
+          svg.w-2.h-2.ms-3(aria-hidden='true' xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 10 6')
+            path(stroke='currentColor' stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='m1 1 4 4 4-4')
+        //  Dropdown menu
+        #dropdownSearch.z-10.hidden.bg-white.rounded-lg.shadow.w-60.dark--bg-gray-700
+          .p-3
+            label.sr-only(for='input-group-search') Search
+            .relative
+              .absolute.inset-y-0.rtl--inset-r-0.start-0.flex.items-center.ps-3.pointer-events-none
+                svg.w-4.h-4.text-gray-500.dark--text-gray-400(aria-hidden='true' xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 20 20')
+                  path(stroke='currentColor' stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='m19 19-4-4m0-7A7 7 0 1 1 1 8a7 7 0 0 1 14 0Z')
+              input#input-group-search.block.w-full.p-2.ps-10.text-sm.text-gray-900.border.border-gray-300.rounded-lg.bg-gray-50.focus--ring-sky-500.focus--border-sky-500.dark--bg-gray-600.dark--border-gray-500.dark--placeholder-gray-400.dark--text-white.dark--focus--ring-sky-500.dark--focus--border-sky-500(type='text' placeholder='Search Airports')
+          ul.h-48.px-3.pb-3.overflow-y-auto.text-sm.text-gray-700.dark--text-gray-200(aria-labelledby='dropdownSearchButton')
+            li
+              .flex.items-center.ps-2.rounded.hover--bg-gray-100.dark--hover--bg-gray-600
+                input#checkbox-item-11.w-4.h-4.text-sky-600.bg-gray-100.border-gray-300.rounded.focus--ring-sky-500.dark--focus--ring-sky-600.dark--ring-offset-gray-700.dark--focus--ring-offset-gray-700.focus--ring-2.dark--bg-gray-600.dark--border-gray-500(type='checkbox')
+                label.w-full.py-2.ms-2.text-sm.font-medium.text-gray-900.rounded.dark--text-gray-300(for='checkbox-item-11') Bonnie Green
+            li
+              .flex.items-center.ps-2.rounded.hover--bg-gray-100.dark--hover--bg-gray-600
+                input#checkbox-item-12.w-4.h-4.text-sky-600.bg-gray-100.border-gray-300.rounded.focus--ring-sky-500.dark--focus--ring-sky-600.dark--ring-offset-gray-700.dark--focus--ring-offset-gray-700.focus--ring-2.dark--bg-gray-600.dark--border-gray-500(checked type='checkbox')
+                label.w-full.py-2.ms-2.text-sm.font-medium.text-gray-900.rounded.dark--text-gray-300(for='checkbox-item-12') Jese Leos
+            li
+              .flex.items-center.ps-2.rounded.hover--bg-gray-100.dark--hover--bg-gray-600
+                input#checkbox-item-13.w-4.h-4.text-sky-600.bg-gray-100.border-gray-300.rounded.focus--ring-sky-500.dark--focus--ring-sky-600.dark--ring-offset-gray-700.dark--focus--ring-offset-gray-700.focus--ring-2.dark--bg-gray-600.dark--border-gray-500(type='checkbox')
+                label.w-full.py-2.ms-2.text-sm.font-medium.text-gray-900.rounded.dark--text-gray-300(for='checkbox-item-13') Michael Gough
+            li
+              .flex.items-center.ps-2.rounded.hover--bg-gray-100.dark--hover--bg-gray-600
+                input#checkbox-item-14.w-4.h-4.text-sky-600.bg-gray-100.border-gray-300.rounded.focus--ring-sky-500.dark--focus--ring-sky-600.dark--ring-offset-gray-700.dark--focus--ring-offset-gray-700.focus--ring-2.dark--bg-gray-600.dark--border-gray-500(type='checkbox')
+                label.w-full.py-2.ms-2.text-sm.font-medium.text-gray-900.rounded.dark--text-gray-300(for='checkbox-item-14') Robert Wall
+            li
+              .flex.items-center.ps-2.rounded.hover--bg-gray-100.dark--hover--bg-gray-600
+                input#checkbox-item-15.w-4.h-4.text-sky-600.bg-gray-100.border-gray-300.rounded.focus--ring-sky-500.dark--focus--ring-sky-600.dark--ring-offset-gray-700.dark--focus--ring-offset-gray-700.focus--ring-2.dark--bg-gray-600.dark--border-gray-500(type='checkbox')
+                label.w-full.py-2.ms-2.text-sm.font-medium.text-gray-900.rounded.dark--text-gray-300(for='checkbox-item-15') Joseph Mcfall
+            li
+              .flex.items-center.ps-2.rounded.hover--bg-gray-100.dark--hover--bg-gray-600
+                input#checkbox-item-16.w-4.h-4.text-sky-600.bg-gray-100.border-gray-300.rounded.focus--ring-sky-500.dark--focus--ring-sky-600.dark--ring-offset-gray-700.dark--focus--ring-offset-gray-700.focus--ring-2.dark--bg-gray-600.dark--border-gray-500(type='checkbox')
+                label.w-full.py-2.ms-2.text-sm.font-medium.text-gray-900.rounded.dark--text-gray-300(for='checkbox-item-16') Leslie Livingston
+            li
+              .flex.items-center.ps-2.rounded.hover--bg-gray-100.dark--hover--bg-gray-600
+                input#checkbox-item-17.w-4.h-4.text-sky-600.bg-gray-100.border-gray-300.rounded.focus--ring-sky-500.dark--focus--ring-sky-600.dark--ring-offset-gray-700.dark--focus--ring-offset-gray-700.focus--ring-2.dark--bg-gray-600.dark--border-gray-500(type='checkbox')
+                label.w-full.py-2.ms-2.text-sm.font-medium.text-gray-900.rounded.dark--text-gray-300(for='checkbox-item-17') Roberta Casas
+
+      //  MAP WIDGET
+      .w-full.bg-white.rounded.mb-8.text-center.p-8
+        p.text-xl.mb-6 Distance from Artic
+        h1.text-6xl.text-center.font-medium 240.5 KM
+
+    div
+      .w-full.bg-white.rounded.mb-8.text-center.p-8
+        p.text-xl.mb-6 Nigerian Time
+        h1#nigeria-time.text-6xl.text-center.font-medium #{nigeriaTime}
+      .w-full.bg-white.rounded.mb-8.text-center.p-8
+        p.text-xl.mb-6 Pakistan Time
+        h1#pakistan-time.text-6xl.text-center.font-medium #{pakistanTime}
+      //  STACK OVERFLOW WIDGET
+
+    div
+      .w-full.bg-white.rounded.mb-8.text-center.p-8
+        p.text-xl.mb-6 London Time
+        h1#london-time.text-6xl.text-center.font-medium #{londonTime}
+      .w-full.bg-white.rounded.mb-8.text-center.p-8
+        p.text-xl.mb-6 EST Time
+        h1#est-time.text-6xl.text-center.font-medium #{estTime}
+      .w-full.bg-white.rounded.mb-8.text-center.p-8
+        p.text-xl.mb-6 Count # of coins
+        input#coins.text-center.mb-2.bg-gray-50.border.border-gray-300.text-gray-900.text-bg.rounded-lg.focus--ring-blue-500.focus--border-blue-500.block.w-full.p-2.dark--bg-gray-700.dark--border-gray-600.dark--placeholder-gray-400.dark--text-white.dark--focus--ring-blue-500.dark--focus--border-blue-500(type='number' placeholder='45.08' required)
+        button.w-full.mb-4.inline-flex.items-center.justify-center.h-12.px-6.font-medium.tracking-wide.text-white.transition.duration-200.bg-sky-900.rounded-lg.hover--bg-sky-700.focus--shadow-outline.focus--outline-none(href='#').
+
+          Calculate
+
+        .flex.flex-col.justify-center.items-center
+          p.text-xl.mb-6 You need:
+          p.text-xl.mb-2 2 X $20 bills
+          p.text-xl.mb-2 1 X $5 bills
+          p.text-xl.mb-2 1 X 5 nickles
+          p.text-xl.mb-2 3 X 3 pennies
+      .w-full.bg-white.rounded.mb-8.text-center.p-8
+        .flex.items-center.justify-center.w-full.mb-4
+          label.flex.flex-col.items-center.justify-center.w-full.h-64.border-2.border-gray-300.border-dashed.rounded-lg.cursor-pointer.bg-gray-50.dark--hover--bg-gray-800.dark--bg-gray-700.hover--bg-gray-100.dark--border-gray-600.dark--hover--border-gray-500.dark--hover--bg-gray-600(for='dropzone-file')
+            .flex.flex-col.items-center.justify-center.pt-5.pb-6
+              svg.w-8.h-8.mb-4.text-gray-500.dark--text-gray-400(aria-hidden='true' xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 20 16')
+                path(stroke='currentColor' stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='M13 13h3a3 3 0 0 0 0-6h-.025A5.56 5.56 0 0 0 16 6.5 5.5 5.5 0 0 0 5.207 5.021C5.137 5.017 5.071 5 5 5a4 4 0 0 0 0 8h2.167M10 15V6m0 0L8 8m2-2 2 2')
+              p.mb-2.text-sm.text-gray-500.dark--text-gray-400
+                span.font-semibold Click to upload
+                | or drag and drop
+
+              p.text-xs.text-gray-500.dark--text-gray-400.
+
+                SVG, PNG, JPG or GIF (MAX. 800x400px)
+
+            input#dropzone-file.hidden(type='file')
+        button.w-full.mb-4.inline-flex.items-center.justify-center.h-12.px-6.font-medium.tracking-wide.text-white.transition.duration-200.bg-sky-900.rounded-lg.hover--bg-sky-700.focus--shadow-outline.focus--outline-none(href='#').
+          Upload
+
+  script(src='https://cdn.jsdelivr.net/npm/flowbite@2.5.1/dist/flowbite.min.js')
+  script(src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.7.0/jquery.min.js")
+  script(src="https://cdn.jsdelivr.net/npm/flowbite@2.5.1/dist/flowbite.min.js")
+  script(src="/js/app.js")
