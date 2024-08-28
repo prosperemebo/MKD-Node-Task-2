@@ -420,9 +420,9 @@ function renderMap(lat = 0, lon = 0) {
 
 // Main APP
 function init() {
-  //   startTimer();
-  //   startWeatherPolling();
-  // startAnalyticPolling();
+  startTimer();
+  startWeatherPolling();
+  startAnalyticPolling();
   renderMap();
   getPopularPosts();
   getLatestImage();

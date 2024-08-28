@@ -3,7 +3,6 @@ var router = express.Router();
 var speakeasy = require('speakeasy');
 var qrcode = require('qrcode');
 
-/* GET users listing. */
 router.get('/setup', (req, res) => {
   var secret = speakeasy.generateSecret({ name: "MKD Dashboard" });
 
