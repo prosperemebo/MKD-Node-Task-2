@@ -5,6 +5,7 @@ let markerVectorLayer;
 
 const searchAirport = document.getElementById('input-group-search');
 const searchAirportResults = document.getElementById('airport-search-results');
+const dashboard = document.getElementById('dashboard');
 
 async function startTimer() {
   try {
@@ -139,6 +140,36 @@ function calculateDistanceFromArtic(lat, lon) {
   }
 }
 
+async function handleWidgetAnalytics(event) {
+  const widget = event.target.closest('.dashboard-widget');
+
+  if (!widget) return;
+
+  const data = widget.dataset;
+  const browserType = navigator.userAgent;
+
+  const payload = JSON.stringify({
+    widget_name: data.name,
+    browser_type: browserType,
+  })
+
+  try {
+    const analyticResponse = await fetch('/analytic', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: payload,
+    })
+  
+    const responseData = await analyticResponse.json()
+
+    document.getElementById('analytics-count').innerHTML = responseData.count
+  } catch (error) {
+    console.error('Failed to save analytic:', error);
+  }
+}
+
 // UTILITIES
 function formatTime(date) {
   const hours = String(date.getHours()).padStart(2, '0');
@@ -230,6 +261,7 @@ function init() {
 
   searchAirport.addEventListener('input', fetchAirports);
   searchAirportResults.addEventListener('click', onSelectAirport);
+  dashboard.addEventListener('click', handleWidgetAnalytics);
 }
 
 init();

@@ -1,15 +1,15 @@
 extends layout
 
 block content
-  .grid.grid-cols-4.gap-8
+  #dashboard.grid.grid-cols-4.gap-8
     div
-      .w-full.bg-white.rounded.mb-8.p-8.flex.flex-col.justify-center.items-center
+      .dashboard-widget.w-full.bg-white.rounded.mb-8.p-8.flex.flex-col.justify-center.items-center(data-name='weather-display')
         img#weatherIcon.mb-6.w-64.h-64(src=weatherIcon alt=weatherDescription)
         h1#temperature.text-4xl.text-center.font-medium #{temperature} ˚C
-      .w-full.bg-white.rounded.mb-8.text-center.p-8.ease-in-out.hover--scale-120.active--scale-98.cursor-pointer.transform.transition-transform.duration-300
+      .dashboard-widget.w-full.bg-white.rounded.mb-8.text-center.p-8.ease-in-out.hover--scale-120.active--scale-98.cursor-pointer.transform.transition-transform.duration-300(data-name='analytics-display')
         p.text-xl.mb-6 Number of clicks
-        h1.text-6xl.text-center.font-medium 456
-      .w-full.p-8.bg-white.rounded.mb-8.text-center
+        h1#analytics-count.text-6xl.text-center.font-medium #{analyticsCount}
+      .dashboard-widget.w-full.p-8.bg-white.rounded.mb-8.text-center(data-name='export-analytics')
         p.text-xl.mb-6 Export XML
         button.w-full.inline-flex.items-center.justify-center.h-12.px-6.font-medium.tracking-wide.text-white.transition.duration-200.bg-sky-900.rounded-lg.hover--bg-sky-800.focus--shadow-outline.focus--outline-none(href='#').
           Export XML
@@ -32,30 +32,30 @@ block content
               input#input-group-search.block.w-full.p-2.ps-10.text-sm.text-gray-900.border.border-gray-300.rounded-lg.bg-gray-50.focus--ring-sky-500.focus--border-sky-500.dark--bg-gray-600.dark--border-gray-500.dark--placeholder-gray-400.dark--text-white.dark--focus--ring-sky-500.dark--focus--border-sky-500(type='text' placeholder='Search Airports', autofocus)
           ul#airport-search-results.h-48.px-3.pb-3.overflow-y-auto.text-sm.text-gray-700.dark--text-gray-200(aria-labelledby='dropdownSearchButton')
 
-      #airport-map.w-full.bg-white.rounded.mb-8.text-center.p-2.h-80
+      #airport-map.dashboard-widget.w-full.bg-white.rounded.mb-8.text-center.p-2.h-80(data-name='airport-map')
         
 
-      .w-full.bg-white.rounded.mb-8.text-center.p-8
+      .dashboard-widget.w-full.bg-white.rounded.mb-8.text-center.p-8(data-name='airport-distance-display')
         p.text-xl.mb-6 Distance from Artic
         h1#distance-from-artic.text-6xl.text-center.font-medium 0.00 KM
 
     div
-      .w-full.bg-white.rounded.mb-8.text-center.p-8
+      .dashboard-widget.w-full.bg-white.rounded.mb-8.text-center.p-8(data-name='nigerian-time')
         p.text-xl.mb-6 Nigerian Time
         h1#nigeria-time.text-6xl.text-center.font-medium #{nigeriaTime}
-      .w-full.bg-white.rounded.mb-8.text-center.p-8
+      .dashboard-widget.w-full.bg-white.rounded.mb-8.text-center.p-8(data-name='pakistan-time')
         p.text-xl.mb-6 Pakistan Time
         h1#pakistan-time.text-6xl.text-center.font-medium #{pakistanTime}
       //  STACK OVERFLOW WIDGET
 
     div
-      .w-full.bg-white.rounded.mb-8.text-center.p-8
+      .dashboard-widget.w-full.bg-white.rounded.mb-8.text-center.p-8(data-name='london-time')
         p.text-xl.mb-6 London Time
         h1#london-time.text-6xl.text-center.font-medium #{londonTime}
-      .w-full.bg-white.rounded.mb-8.text-center.p-8
+      .dashboard-widget.w-full.bg-white.rounded.mb-8.text-center.p-8(data-name='est-time')
         p.text-xl.mb-6 EST Time
         h1#est-time.text-6xl.text-center.font-medium #{estTime}
-      .w-full.bg-white.rounded.mb-8.text-center.p-8
+      .dashboard-widget.w-full.bg-white.rounded.mb-8.text-center.p-8(data-name='count-coins')
         p.text-xl.mb-6 Count # of coins
         input#coins.text-center.mb-2.bg-gray-50.border.border-gray-300.text-gray-900.text-bg.rounded-lg.focus--ring-blue-500.focus--border-blue-500.block.w-full.p-2.dark--bg-gray-700.dark--border-gray-600.dark--placeholder-gray-400.dark--text-white.dark--focus--ring-blue-500.dark--focus--border-blue-500(type='number' placeholder='45.08' required)
         button.w-full.mb-4.inline-flex.items-center.justify-center.h-12.px-6.font-medium.tracking-wide.text-white.transition.duration-200.bg-sky-900.rounded-lg.hover--bg-sky-700.focus--shadow-outline.focus--outline-none(href='#').
@@ -68,7 +68,7 @@ block content
           p.text-xl.mb-2 1 X $5 bills
           p.text-xl.mb-2 1 X 5 nickles
           p.text-xl.mb-2 3 X 3 pennies
-      .w-full.bg-white.rounded.mb-8.text-center.p-8
+      .dashboard-widget.w-full.bg-white.rounded.mb-8.text-center.p-8(data-name='upload-file')
         .flex.items-center.justify-center.w-full.mb-4
           label.flex.flex-col.items-center.justify-center.w-full.h-64.border-2.border-gray-300.border-dashed.rounded-lg.cursor-pointer.bg-gray-50.dark--hover--bg-gray-800.dark--bg-gray-700.hover--bg-gray-100.dark--border-gray-600.dark--hover--border-gray-500.dark--hover--bg-gray-600(for='dropzone-file')
             .flex.flex-col.items-center.justify-center.pt-5.pb-6
