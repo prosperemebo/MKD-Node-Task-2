@@ -2,13 +2,41 @@ var express = require('express');
 var timeUtils = require('../utils/time');
 var weatherUtils = require('../utils/weather');
 var xmlbuilder = require('xmlbuilder2');
+var uuid = require('uuid');
+const path = require('path');
+var multer = require('multer');
 
 var { Op } = require('sequelize');
-var { Airport, Analytic } = require('../models');
+var { Airport, Analytic, Image } = require('../models');
 var { analyticsRateLimiter } = require('../utils/rate-limiter');
 var { getPopularPosts } = require('../utils/reddit');
 
 var router = express.Router();
+
+const multerStorage = multer.diskStorage({
+  destination: (req, file, cb) => {
+    cb(null, path.join(__dirname, '../public/uploads'));
+  },
+  filename: (req, file, cb) => {
+    const uniqueName = `${uuid.v4()}${path.extname(file.originalname)}`;
+    cb(null, uniqueName);
+  }
+});
+
+const multerFilter = (req, file, cb) => {
+  if (file.mimetype.startsWith('image')) {
+    cb(null, true);
+  } else {
+    cb(new AppError('Not an image! Please upload only images.', 400), false);
+  }
+};
+
+const upload = multer({
+  storage: multerStorage,
+  fileFilter: multerFilter
+});
+
+const uploadUserPhoto = upload.single('image');
 
 /* GET home page. */
 router.get('/', async function (req, res, next) {
@@ -195,7 +223,7 @@ router.get('/posts', async (req, res) => {
     var postData = await getPopularPosts();
 
     if (!postData || !postData?.data || !postData?.data?.children) {
-      const response = {
+      var response = {
         status: 'fail',
         message: 'An error occurred while fetching posts!',
       };
@@ -222,9 +250,121 @@ router.get('/posts', async (req, res) => {
   } catch (error) {
     console.error('Error fetching Reddit data:', error);
 
-    const response = {
+    var response = {
       status: 'fail',
       message: 'An error occurred while fetching posts!',
+    };
+
+    res.status(500).json(response);
+  }
+});
+
+router.post('/calculate-coins', (req, res) => {
+  var { amount } = req.body;
+
+  if (typeof amount !== 'number' || amount < 0) {
+    var response = {
+      status: 'fail',
+      message: 'Invalid amount. Please enter a valid number.',
+    };
+
+    return res.status(400).json(response);
+  }
+
+  var denominations = [
+    { name: '$20 bill', value: 20.0 },
+    { name: '$10 bill', value: 10.0 },
+    { name: '$5 bill', value: 5.0 },
+    { name: '$1 bill', value: 1.0 },
+    { name: '25 cent', value: 0.25 },
+    { name: '10 cent', value: 0.1 },
+    { name: '5 cent', value: 0.05 },
+    { name: '1 cent', value: 0.01 },
+  ];
+
+  let remainingAmount = amount;
+  var result = [];
+
+  denominations.forEach((denomination) => {
+    var count = Math.floor(remainingAmount / denomination.value);
+
+    if (count > 0) {
+      result.push(`${count} X ${denomination.name}${count > 1 ? 's' : ''}`);
+
+      remainingAmount = (remainingAmount - count * denomination.value).toFixed(
+        2
+      );
+    }
+  });
+
+  var response = {
+    status: 'success',
+    data: result,
+  };
+
+  res.status(200).json(response);
+});
+
+
+router.post('/images/upload', uploadUserPhoto, async (req, res) => {
+  try {
+    if (!req.file) {
+      return res.status(400).json({
+        status: 'fail',
+        message: 'No file uploaded!',
+      });
+    }
+
+    const imageUrl = `/uploads/${req.file.filename}`;
+    const image = await Image.create({ imageUrl });
+
+    const response = {
+      status: 'success',
+      message: 'Image uploaded successfully!',
+      data: image,
+    };
+
+    res.status(200).json(response);
+  } catch (error) {
+    console.error('Error:', error);
+
+    const response = {
+      status: 'fail',
+      message: 'An error occurred while uploading the image!',
+    };
+
+    res.status(500).json(response);
+  }
+});
+
+router.get('/images/recent', async (req, res) => {
+  try {
+    var imageData = await Image.findOne({
+      order: [['createdAt', 'DESC']],
+    });
+
+    if (imageData) {
+      var response = {
+        status: 'success',
+        data: imageData,
+      };
+
+      res.status(200).json(response);
+    } else {
+      var response = {
+        status: 'success',
+        message: 'No image found',
+        data: null,
+      };
+
+      res.status(404).send(response);
+    }
+  } catch (error) {
+    console.error('Error:', error);
+
+    var response = {
+      status: 'fail',
+      message: 'An error occurred while fetching the image!',
     };
 
     res.status(500).json(response);

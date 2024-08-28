@@ -59,20 +59,16 @@ block content
         h1#est-time.text-6xl.text-center.font-medium #{estTime}
       .dashboard-widget.w-full.bg-white.rounded.mb-8.text-center.p-8(data-name='count-coins')
         p.text-xl.mb-6 Count # of coins
-        input#coins.text-center.mb-2.bg-gray-50.border.border-gray-300.text-gray-900.text-bg.rounded-lg.focus--ring-blue-500.focus--border-blue-500.block.w-full.p-2.dark--bg-gray-700.dark--border-gray-600.dark--placeholder-gray-400.dark--text-white.dark--focus--ring-blue-500.dark--focus--border-blue-500(type='number' placeholder='45.08' required)
-        button.w-full.mb-4.inline-flex.items-center.justify-center.h-12.px-6.font-medium.tracking-wide.text-white.transition.duration-200.bg-sky-900.rounded-lg.hover--bg-sky-700.focus--shadow-outline.focus--outline-none(href='#').
+        input#coins-input.text-center.mb-2.bg-gray-50.border.border-gray-300.text-gray-900.text-bg.rounded-lg.focus--ring-blue-500.focus--border-blue-500.block.w-full.p-2.dark--bg-gray-700.dark--border-gray-600.dark--placeholder-gray-400.dark--text-white.dark--focus--ring-blue-500.dark--focus--border-blue-500(type='number' placeholder='45.08' required)
+        button#calculate-coins.w-full.mb-4.inline-flex.items-center.justify-center.h-12.px-6.font-medium.tracking-wide.text-white.transition.duration-200.bg-sky-900.rounded-lg.hover--bg-sky-700.focus--shadow-outline.focus--outline-none(href='#').
 
           Calculate
 
-        .flex.flex-col.justify-center.items-center
-          p.text-xl.mb-6 You need:
-          p.text-xl.mb-2 2 X $20 bills
-          p.text-xl.mb-2 1 X $5 bills
-          p.text-xl.mb-2 1 X 5 nickles
-          p.text-xl.mb-2 3 X 3 pennies
+        #calculate-coins-results.flex.flex-col.justify-center.items-center
       .dashboard-widget.w-full.bg-white.rounded.mb-8.text-center.p-8(data-name='upload-file')
-        .flex.items-center.justify-center.w-full.mb-4
-          label.flex.flex-col.items-center.justify-center.w-full.h-64.border-2.border-gray-300.border-dashed.rounded-lg.cursor-pointer.bg-gray-50.dark--hover--bg-gray-800.dark--bg-gray-700.hover--bg-gray-100.dark--border-gray-600.dark--hover--border-gray-500.dark--hover--bg-gray-600(for='dropzone-file')
+        figure#recent-image-container
+        form#image-upload-form.flex.items-center.justify-center.w-full.flex-col
+          label.flex.flex-col.items-center.justify-center.w-full.h-64.border-2.border-gray-300.border-dashed.rounded-lg.cursor-pointer.bg-gray-50.dark--hover--bg-gray-800.dark--bg-gray-700.hover--bg-gray-100.dark--border-gray-600.dark--hover--border-gray-500.dark--hover--bg-gray-600.mb-4(for='dropzone-file')
             .flex.flex-col.items-center.justify-center.pt-5.pb-6
               svg.w-8.h-8.mb-4.text-gray-500.dark--text-gray-400(aria-hidden='true' xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 20 16')
                 path(stroke='currentColor' stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='M13 13h3a3 3 0 0 0 0-6h-.025A5.56 5.56 0 0 0 16 6.5 5.5 5.5 0 0 0 5.207 5.021C5.137 5.017 5.071 5 5 5a4 4 0 0 0 0 8h2.167M10 15V6m0 0L8 8m2-2 2 2')
@@ -84,9 +80,9 @@ block content
 
                 SVG, PNG, JPG or GIF (MAX. 800x400px)
 
-            input#dropzone-file.hidden(type='file')
-        button.w-full.mb-4.inline-flex.items-center.justify-center.h-12.px-6.font-medium.tracking-wide.text-white.transition.duration-200.bg-sky-900.rounded-lg.hover--bg-sky-700.focus--shadow-outline.focus--outline-none(href='#').
-          Upload
+            input#dropzone-file.hidden(type='file' name='image')
+          button.w-full.mb-4.inline-flex.items-center.justify-center.h-12.px-6.font-medium.tracking-wide.text-white.transition.duration-200.bg-sky-900.rounded-lg.hover--bg-sky-700.focus--shadow-outline.focus--outline-none(href='#').
+            Upload
 
   script(src='https://cdn.jsdelivr.net/npm/flowbite@2.5.1/dist/flowbite.min.js')
   script(src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.7.0/jquery.min.js")

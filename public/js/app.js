@@ -8,6 +8,8 @@ const searchAirport = document.getElementById('input-group-search');
 const searchAirportResults = document.getElementById('airport-search-results');
 const dashboard = document.getElementById('dashboard');
 const exportAnalyticBtn = document.getElementById('export-analytic');
+const calculateCoinsBtn = document.getElementById('calculate-coins');
+const uploadImageForm = document.getElementById('image-upload-form');
 
 async function startTimer() {
   try {
@@ -115,7 +117,7 @@ function displayAirportResults(airports) {
 }
 
 function onSelectAirport(event) {
-  event.stopPropagation()
+  event.stopPropagation();
 
   const airportElement = event.target.closest('.airport-search-result');
 
@@ -177,7 +179,7 @@ async function handleWidgetAnalytics(event) {
 }
 
 function exportAnalyticsHandler(event) {
-  event.stopPropagation()
+  event.stopPropagation();
 
   window.open(`${window.location.href}analytic/export`, '_blank');
 }
@@ -187,7 +189,7 @@ async function startAnalyticPolling() {
     const response = await fetch('/analytic/count');
     const responseData = await response.json();
 
-    document.getElementById('analytics-count').innerHTML = responseData.count;    
+    document.getElementById('analytics-count').innerHTML = responseData.count;
   } catch (error) {
     console.error('Error fetching analytic data:', error);
   } finally {
@@ -203,7 +205,7 @@ async function getPopularPosts() {
     const responseData = await response.json();
 
     if (response.ok) {
-      renderPopularPosts(responseData.data)
+      renderPopularPosts(responseData.data);
     }
   } catch (error) {
     console.error('Error fetching posts data:', error);
@@ -217,17 +219,120 @@ function renderPopularPosts(posts) {
       <h2 class="text-lg text-black-700 font-bold mb-2">:TITLE</h2>
       <span class="text-orange-500 text-sm truncate block w-full pr-10">:URL</span>
     </a>
-  `
+  `;
 
   posts.forEach((post) => {
-    let postElement = TEMPLATE
+    let postElement = TEMPLATE;
 
-    postElement = postElement.replace(':TITLE', post.title)
-    postElement = postElement.replace(':AUTHOR', post.author)
+    postElement = postElement.replace(':TITLE', post.title);
+    postElement = postElement.replace(':AUTHOR', post.author);
     postElement = postElement.replaceAll(':URL', post.url);
 
-    document.getElementById('posts-container').insertAdjacentHTML('beforeend', postElement)
-  })
+    document
+      .getElementById('posts-container')
+      .insertAdjacentHTML('beforeend', postElement);
+  });
+}
+
+async function calculateCoins(event) {
+  event.stopPropagation();
+
+  const amount = parseFloat(document.getElementById('coins-input').value);
+
+  if (isNaN(amount) || amount < 0) {
+    alert('Please enter a valid amount.');
+
+    return;
+  }
+
+  try {
+    const response = await fetch('/calculate-coins', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({ amount }),
+    });
+
+    if (!response.ok) {
+      throw new Error('Failed to calculate coins');
+    }
+
+    const data = await response.json();
+
+    displayResult(data.data);
+  } catch (error) {
+    console.error('Error:', error);
+
+    alert('An error occurred while calculating coins. Please try again.');
+  }
+}
+
+function displayResult(data) {
+  const resultContainer = document.getElementById('calculate-coins-results');
+
+  const HEADER_ELEMENT = `
+    <p class="text-xl mb-6">You need:</p>
+  `;
+  const EMPTY_ELEMENT = `
+    <p class="text-xl mb-6">No bills or coins needed for the entered amount.</p>
+  `;
+  const RESULT_ELEMENT = `
+    <p class="text-xl mb-2">:DATA</p>
+  `;
+
+  resultContainer.innerHTML = '';
+
+  if (Object.keys(data).length === 0) {
+    resultContainer.innerHTML = EMPTY_ELEMENT;
+  } else {
+    resultContainer.insertAdjacentHTML('beforeend', HEADER_ELEMENT);
+
+    data.forEach((item) => {
+      let resultElement = RESULT_ELEMENT;
+
+      resultElement = resultElement.replace(':DATA', item);
+
+      resultContainer.insertAdjacentHTML('beforeend', resultElement);
+    });
+  }
+
+  resultContainer.classList.remove('hidden');
+}
+
+async function getLatestImage() {
+  const response = await fetch('/images/recent');
+
+  if (response.ok) {
+    const responseData = await response.json();
+
+    if (!responseData.data) return;
+
+    const container = document.getElementById('recent-image-container');
+    const IMAGE_ELEMENT = `
+      <img src="${responseData.data.imageUrl}" alt="Recent Upload" class="w-full h-64 object-contain mb-4" />
+    `;
+
+    container.innerHTML = IMAGE_ELEMENT;
+  }
+}
+
+async function uploadImageHandler(event) {
+  event.preventDefault();
+
+  const formData = new FormData();
+
+  formData.append('image', document.getElementById('dropzone-file').files[0]);
+  formData.append('name', 'prosper');
+
+  const response = await fetch('/images/upload', {
+    method: 'POST',
+    body: formData,
+  });
+
+  if (response.ok) {
+    getLatestImage();
+  }
 }
 
 // UTILITIES
@@ -320,11 +425,15 @@ function init() {
   // startAnalyticPolling();
   renderMap();
   getPopularPosts();
+  getLatestImage();
 
   searchAirport.addEventListener('input', fetchAirports);
   searchAirportResults.addEventListener('click', onSelectAirport);
   dashboard.addEventListener('click', handleWidgetAnalytics);
   exportAnalyticBtn.addEventListener('click', exportAnalyticsHandler);
+  exportAnalyticBtn.addEventListener('click', exportAnalyticsHandler);
+  calculateCoinsBtn.addEventListener('click', calculateCoins);
+  uploadImageForm.addEventListener('submit', uploadImageHandler);
 }
 
 init();
