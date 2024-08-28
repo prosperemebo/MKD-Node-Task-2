@@ -11,7 +11,7 @@ block content
         h1#analytics-count.text-6xl.text-center.font-medium #{analyticsCount}
       .dashboard-widget.w-full.p-8.bg-white.rounded.mb-8.text-center(data-name='export-analytics')
         p.text-xl.mb-6 Export XML
-        button.w-full.inline-flex.items-center.justify-center.h-12.px-6.font-medium.tracking-wide.text-white.transition.duration-200.bg-sky-900.rounded-lg.hover--bg-sky-800.focus--shadow-outline.focus--outline-none(href='#').
+        button#export-analytic.w-full.inline-flex.items-center.justify-center.h-12.px-6.font-medium.tracking-wide.text-white.transition.duration-200.bg-sky-900.rounded-lg.hover--bg-sky-800.focus--shadow-outline.focus--outline-none(href='#').
           Export XML
 
     div
@@ -46,7 +46,9 @@ block content
       .dashboard-widget.w-full.bg-white.rounded.mb-8.text-center.p-8(data-name='pakistan-time')
         p.text-xl.mb-6 Pakistan Time
         h1#pakistan-time.text-6xl.text-center.font-medium #{pakistanTime}
-      //  STACK OVERFLOW WIDGET
+      #posts-container.dashboard-widget.w-full.bg-white.rounded.mb-8.p-8(data-name='top-posts')
+        p.text-xl.mb-6 Posts
+        
 
     div
       .dashboard-widget.w-full.bg-white.rounded.mb-8.text-center.p-8(data-name='london-time')

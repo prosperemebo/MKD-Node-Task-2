@@ -1,11 +1,13 @@
 let timer;
 let weatherPolling;
+let analyticPolling;
 let map;
 let markerVectorLayer;
 
 const searchAirport = document.getElementById('input-group-search');
 const searchAirportResults = document.getElementById('airport-search-results');
 const dashboard = document.getElementById('dashboard');
+const exportAnalyticBtn = document.getElementById('export-analytic');
 
 async function startTimer() {
   try {
@@ -48,7 +50,7 @@ async function startWeatherPolling() {
     console.error('Error fetching weather data:', error);
   } finally {
     if (!weatherPolling) {
-      weatherPolling = setInterval(startWeatherPolling, 50000);
+      weatherPolling = setInterval(startWeatherPolling, 500000);
     }
   }
 }
@@ -113,6 +115,8 @@ function displayAirportResults(airports) {
 }
 
 function onSelectAirport(event) {
+  event.stopPropagation()
+
   const airportElement = event.target.closest('.airport-search-result');
 
   if (!airportElement) return;
@@ -133,7 +137,7 @@ function calculateDistanceFromArtic(lat, lon) {
     const newCoords = ol.proj.fromLonLat([lon, lat]);
 
     map.getView().setCenter(newCoords);
-    map.getView().setZoom(6); 
+    map.getView().setZoom(6);
 
     const markerFeature = markerVectorLayer.getSource().getFeatures()[0];
     markerFeature.setGeometry(new ol.geom.Point(newCoords));
@@ -151,7 +155,7 @@ async function handleWidgetAnalytics(event) {
   const payload = JSON.stringify({
     widget_name: data.name,
     browser_type: browserType,
-  })
+  });
 
   try {
     const analyticResponse = await fetch('/analytic', {
@@ -160,14 +164,70 @@ async function handleWidgetAnalytics(event) {
         'Content-Type': 'application/json',
       },
       body: payload,
-    })
-  
-    const responseData = await analyticResponse.json()
+    });
 
-    document.getElementById('analytics-count').innerHTML = responseData.count
+    if (!analyticResponse.ok) return;
+
+    const responseData = await analyticResponse.json();
+
+    document.getElementById('analytics-count').innerHTML = responseData.count;
   } catch (error) {
     console.error('Failed to save analytic:', error);
   }
+}
+
+function exportAnalyticsHandler(event) {
+  event.stopPropagation()
+
+  window.open(`${window.location.href}analytic/export`, '_blank');
+}
+
+async function startAnalyticPolling() {
+  try {
+    const response = await fetch('/analytic/count');
+    const responseData = await response.json();
+
+    document.getElementById('analytics-count').innerHTML = responseData.count;    
+  } catch (error) {
+    console.error('Error fetching analytic data:', error);
+  } finally {
+    if (!analyticPolling) {
+      analyticPolling = setInterval(startAnalyticPolling, 100000);
+    }
+  }
+}
+
+async function getPopularPosts() {
+  try {
+    const response = await fetch('/posts');
+    const responseData = await response.json();
+
+    if (response.ok) {
+      renderPopularPosts(responseData.data)
+    }
+  } catch (error) {
+    console.error('Error fetching posts data:', error);
+  }
+}
+
+function renderPopularPosts(posts) {
+  const TEMPLATE = `
+    <a class="block w-full bg-white rounded mb-4 p-4 border-solid border-2 border-gray-400 hover--bg-gray-200 ease-in-out cursor-pointer duration-500"
+      href=":URL" target="_blank"><span class="text-muted">Posted by :AUTHOR</span>
+      <h2 class="text-lg text-black-700 font-bold mb-2">:TITLE</h2>
+      <span class="text-orange-500 text-sm truncate block w-full pr-10">:URL</span>
+    </a>
+  `
+
+  posts.forEach((post) => {
+    let postElement = TEMPLATE
+
+    postElement = postElement.replace(':TITLE', post.title)
+    postElement = postElement.replace(':AUTHOR', post.author)
+    postElement = postElement.replaceAll(':URL', post.url);
+
+    document.getElementById('posts-container').insertAdjacentHTML('beforeend', postElement)
+  })
 }
 
 // UTILITIES
@@ -257,11 +317,14 @@ function renderMap(lat = 0, lon = 0) {
 function init() {
   //   startTimer();
   //   startWeatherPolling();
+  // startAnalyticPolling();
   renderMap();
+  getPopularPosts();
 
   searchAirport.addEventListener('input', fetchAirports);
   searchAirportResults.addEventListener('click', onSelectAirport);
   dashboard.addEventListener('click', handleWidgetAnalytics);
+  exportAnalyticBtn.addEventListener('click', exportAnalyticsHandler);
 }
 
 init();

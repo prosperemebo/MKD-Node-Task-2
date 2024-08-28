@@ -1,9 +1,12 @@
 var express = require('express');
 var timeUtils = require('../utils/time');
 var weatherUtils = require('../utils/weather');
+var xmlbuilder = require('xmlbuilder2');
 
 var { Op } = require('sequelize');
 var { Airport, Analytic } = require('../models');
+var { analyticsRateLimiter } = require('../utils/rate-limiter');
+var { getPopularPosts } = require('../utils/reddit');
 
 var router = express.Router();
 
@@ -108,7 +111,7 @@ router.get('/airports', async (req, res) => {
   res.json(response);
 });
 
-router.post('/analytic', async (req, res) => {
+router.post('/analytic', analyticsRateLimiter, async (req, res) => {
   var { widget_name, browser_type } = req.body;
 
   try {
@@ -117,7 +120,7 @@ router.post('/analytic', async (req, res) => {
       browser_type,
       create_at: new Date(),
     });
-    
+
     var count = await Analytic.count();
 
     var response = {
@@ -155,6 +158,76 @@ router.get('/analytic/count', async (req, res) => {
     };
 
     res.status(500).send(response);
+  }
+});
+
+router.get('/analytic/export', async (req, res) => {
+  try {
+    var analytics = await Analytic.findAll();
+
+    var analyticsData = analytics.map((analytic) => ({
+      analytic: {
+        id: analytic.id,
+        create_at: analytic.create_at.toISOString(),
+        widget_name: analytic.widget_name,
+        browser_type: analytic.browser_type,
+      },
+    }));
+
+    var xmlData = xmlbuilder
+      .create({ version: '1.0' })
+      .ele('analytics')
+      .ele(analyticsData)
+      .end({ prettyPrint: true });
+
+    res.setHeader('Content-Type', 'application/xml');
+    res.setHeader('Content-Disposition', 'attachment; filename=analytics.xml');
+
+    res.send(xmlData);
+  } catch (error) {
+    console.error('Export error:', error);
+    res.status(500).send('An error occurred during export, try again!');
+  }
+});
+
+router.get('/posts', async (req, res) => {
+  try {
+    var postData = await getPopularPosts();
+
+    if (!postData || !postData?.data || !postData?.data?.children) {
+      const response = {
+        status: 'fail',
+        message: 'An error occurred while fetching posts!',
+      };
+
+      return res.status(500).json(response);
+    }
+
+    var evenPosts = postData.data.children.filter(
+      (_, index) => index % 2 === 0
+    );
+
+    var topPosts = evenPosts.slice(0, 4).map((post) => ({
+      title: post.data.title,
+      url: post.data.url,
+      author: post.data.author,
+    }));
+
+    var response = {
+      status: 'success',
+      data: topPosts,
+    };
+
+    res.status(200).json(response);
+  } catch (error) {
+    console.error('Error fetching Reddit data:', error);
+
+    const response = {
+      status: 'fail',
+      message: 'An error occurred while fetching posts!',
+    };
+
+    res.status(500).json(response);
   }
 });
 
