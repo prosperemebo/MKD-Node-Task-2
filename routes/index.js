@@ -2,6 +2,9 @@ var express = require('express');
 var timeUtils = require('../utils/time');
 var weatherUtils = require('../utils/weather');
 
+const { Op } = require('sequelize');
+var { Airport } = require('../models');
+
 var router = express.Router();
 
 /* GET home page. */
@@ -68,6 +71,39 @@ router.get('/weather', async function (req, res, next) {
     console.error('Error fetching data from API:', error);
     next(error);
   }
+});
+
+router.get('/airports', async (req, res) => {
+  var searchQuery = req.query.search;
+
+  if (!searchQuery || searchQuery.length < 3) {
+    var response = {
+      status: 'success',
+      message: 'Found zero airports',
+      count: 0,
+      data: []
+    }
+
+    return res.json(response);
+  }
+
+  var results = await Airport.findAll({
+    where: {
+      name: {
+        [Op.like]: `%${searchQuery}%`
+      }
+    },
+    limit: 10
+  });
+
+  var response = {
+    status: 'success',
+    message: `Found ${results.length} airports`,
+    count: results.length,
+    data: results
+  }
+
+  res.json(response);
 });
 
 module.exports = router;
