@@ -1,0 +1,14 @@
+extends layout
+
+block content
+  .flex.items-center.justify-center.flex-col.mt-60
+    img.mb-6.h-64(src=qrcode, alt="QR Code")
+    p.text-white.text-xl.mb-6.text-center.mb-2 Secret
+    p.text-white.text-2xl.mb-6.text-center.text-bold.mb-6 #{token}
+    a#export-analytic.inline-flex.items-center.justify-center.h-12.px-6.font-bold.tracking-wide.text-white.transition.duration-200.bg-green-600.rounded-lg.hover--bg-green-700.focus--shadow-outline.focus--outline-none.font-bold(href='/2fa/verify').
+          Verify Token
+  
+  script(src='https://cdn.jsdelivr.net/npm/flowbite@2.5.1/dist/flowbite.min.js')
+  script(src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.7.0/jquery.min.js")
+  script(src="https://cdn.jsdelivr.net/npm/flowbite@2.5.1/dist/flowbite.min.js")
+  script(src="https://cdn.jsdelivr.net/npm/openlayers@4.6.5/dist/ol.min.js")

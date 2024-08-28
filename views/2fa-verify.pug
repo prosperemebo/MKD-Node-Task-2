@@ -1,0 +1,16 @@
+extends layout
+
+block content
+  .flex.items-center.justify-center.flex-col.mt-60
+    p.text-white.text-xl.mb-6.text-center.mb-2 Verify Token
+    p#error.text-red-500.text-xl.mb-6.text-center.mb-2 
+    input#input-token.block.mb-12.p-4.text-lg.text-center.text-gray-900.border.border-gray-300.rounded-lg.bg-gray-50.focus--ring-sky-500.focus--border-sky-500.dark--bg-gray-600.dark--border-gray-500.dark--placeholder-gray-400.dark--text-white.dark--focus--ring-sky-500.dark--focus--border-sky-500(type='text' placeholder='Enter Token', autofocus)
+    button#verify-token.inline-flex.items-center.justify-center.mb-6.h-12.px-6.font-bold.tracking-wide.text-white.transition.duration-200.bg-green-600.rounded-lg.hover--bg-green-700.focus--shadow-outline.focus--outline-none.font-bold.
+          Verify Token
+    a#export-analytic.inline-flex.items-center.justify-center.h-12.px-6.font-bold.tracking-wide.text-white.transition.duration-200.bg-green-600.rounded-lg.hover--bg-green-700.focus--shadow-outline.focus--outline-none.font-bold(href='/2fa/setup').
+          Get Secret
+  
+  script(src='https://cdn.jsdelivr.net/npm/flowbite@2.5.1/dist/flowbite.min.js')
+  script(src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.7.0/jquery.min.js")
+  script(src="https://cdn.jsdelivr.net/npm/flowbite@2.5.1/dist/flowbite.min.js")
+  script(src="/js/verify.js")

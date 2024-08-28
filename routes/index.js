@@ -40,6 +40,10 @@ const uploadUserPhoto = upload.single('image');
 
 /* GET home page. */
 router.get('/', async function (req, res, next) {
+  if (!req.session.authenticated) {
+    return res.redirect('/2fa/setup');
+  } 
+
   try {
     var weatherData = await weatherUtils.getWeather(req.ip);
 

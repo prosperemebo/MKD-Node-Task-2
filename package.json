@@ -24,6 +24,7 @@
     "ol": "^7.1.0",
     "perfect-express-sanitizer": "^2.0.2",
     "pug": "^3.0.2",
+    "qrcode": "^1.5.4",
     "sequelize": "^6.37.3",
     "sequelize-cli": "^6.6.2",
     "speakeasy": "^2.0.0",
