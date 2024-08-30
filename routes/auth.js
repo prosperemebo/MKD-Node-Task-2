@@ -2,6 +2,7 @@ var express = require('express');
 var router = express.Router();
 var speakeasy = require('speakeasy');
 var qrcode = require('qrcode');
+var { body, validationResult } = require('express-validator');
 
 router.get('/setup', (req, res) => {
   var secret = speakeasy.generateSecret({ name: 'MKD Dashboard' });
@@ -17,7 +18,12 @@ router.get('/setup', (req, res) => {
         token: 'Failed to generate QR code. Please try again later.',
       });
 
-      return res.status(500).json({ status: 'fail', message: 'Failed to generate QR code. Please try again later.' });
+      return res
+        .status(500)
+        .json({
+          status: 'fail',
+          message: 'Failed to generate QR code. Please try again later.',
+        });
     }
 
     res.render('2fa-setup', {
@@ -38,30 +44,62 @@ router.get('/verify', (req, res) => {
   });
 });
 
-router.post('/verify', (req, res) => {
-  var { token } = req.body;
+router.post(
+  '/verify',
+  [
+    body('token')
+      .trim()
+      .escape()
+      .isAlphanumeric()
+      .withMessage('Invalid token format. Token must be alphanumeric.'),
+  ],
+  (req, res) => {
+    var errors = validationResult(req);
 
-  if (!req.session.twoFactorSecret) {
-    return res.status(403).json({ status: 'fail', message: '2FA not set up. Please complete the setup first.' });
+    if (!errors.isEmpty()) {
+      return res
+        .status(400)
+        .json({ status: 'fail', message: errors.array()[0].msg });
+    }
+
+    var { token } = req.body;
+
+    if (!req.session.twoFactorSecret) {
+      return res
+        .status(403)
+        .json({
+          status: 'fail',
+          message: '2FA not set up. Please complete the setup first.',
+        });
+    }
+
+    if (!token || typeof token !== 'string' || token.trim().length === 0) {
+      return res
+        .status(400)
+        .json({
+          status: 'fail',
+          message: 'Invalid token. Please enter a valid 2FA token.',
+        });
+    }
+
+    var verified = speakeasy.totp.verify({
+      secret: req.session.twoFactorSecret,
+      encoding: 'base32',
+      token,
+    });
+
+    if (verified) {
+      req.session.authenticated = true;
+      res.json({ status: 'success', message: '2FA verified!' });
+    } else {
+      res
+        .status(401)
+        .json({
+          status: 'fail',
+          message: 'Invalid 2FA token. Please try again.',
+        });
+    }
   }
-
-  if (!token || typeof token !== 'string' || token.trim().length === 0) {
-    return res.status(400).json({ status: 'fail', message: 'Invalid token. Please enter a valid 2FA token.' });
-  }
-
-  var verified = speakeasy.totp.verify({
-    secret: req.session.twoFactorSecret,
-    encoding: 'base32',
-    token,
-  });
-
-  if (verified) {
-    req.session.authenticated = true;
-    res.json({ status: 'success', message: '2FA verified!' });
-  } else {
-    res.status(401).json({ status: 'fail', message: 'Invalid 2FA token. Please try again.' });
-  }
-});
-
+);
 
 module.exports = router;

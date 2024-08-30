@@ -11,6 +11,7 @@ var { Airport, Analytic, Image } = require('../models');
 var { analyticsRateLimiter } = require('../utils/rate-limiter');
 var { getPopularPosts } = require('../utils/reddit');
 var { encode } = require('html-entities');
+var { body, validationResult } = require('express-validator');
 
 var router = express.Router();
 
@@ -21,7 +22,7 @@ const multerStorage = multer.diskStorage({
   filename: (req, file, cb) => {
     const uniqueName = `${uuid.v4()}${path.extname(file.originalname)}`;
     cb(null, uniqueName);
-  }
+  },
 });
 
 const multerFilter = (req, file, cb) => {
@@ -34,16 +35,16 @@ const multerFilter = (req, file, cb) => {
 
 const upload = multer({
   storage: multerStorage,
-  fileFilter: multerFilter
+  fileFilter: multerFilter,
 });
 
 const uploadUserPhoto = upload.single('image');
 
 /* GET home page. */
 router.get('/', async function (req, res, next) {
-  // if (!req.session.authenticated) {
-  //   return res.redirect('/2fa/setup');
-  // } 
+  if (!req.session.authenticated) {
+    return res.redirect('/2fa/setup');
+  }
 
   try {
     // Timezones
@@ -53,12 +54,14 @@ router.get('/', async function (req, res, next) {
     var pakistanTime = timeUtils.formatTime(pakistan);
     var londonTime = timeUtils.formatTime(london);
     var estTime = timeUtils.formatTime(est);
-    
+
     // Weather
     var weatherData = await weatherUtils.getWeather(req.ip);
     var condition = weatherData?.current?.condition || 'Error';
 
-    var weatherIcon = condition.icon ? `https:${condition.icon}` : '/images/weather-error.webp';
+    var weatherIcon = condition.icon
+      ? `https:${condition.icon}`
+      : '/images/weather-error.webp';
     var temperature = weatherData?.current?.temp_c || '0.00';
 
     // Analytics
@@ -105,10 +108,10 @@ router.get('/weather', async function (req, res, next) {
     if (!weatherData) {
       var response = {
         status: 'fail',
-        message: 'Unable to get weather data at this time!'
+        message: 'Unable to get weather data at this time!',
       };
-  
-      res.status(500).json(response);  
+
+      res.status(500).json(response);
     }
 
     var response = {
@@ -279,52 +282,69 @@ router.get('/posts', async (req, res) => {
   }
 });
 
-router.post('/calculate-coins', (req, res) => {
-  var { amount } = req.body;
+router.post(
+  '/calculate-coins',
+  [
+    body('amount')
+      .isFloat({ min: 0 })
+      .withMessage('Invalid amount. Please enter a valid non-negative number.'),
+  ],
+  (req, res) => {
+    var errors = validationResult(req);
 
-  if (typeof amount !== 'number' || amount < 0) {
+    if (!errors.isEmpty()) {
+      return res.status(400).json({
+        status: 'fail',
+        message: errors.array()[0].msg,
+      });
+    }
+
+    var { amount } = req.body;
+
+    if (typeof amount !== 'number' || amount < 0) {
+      var response = {
+        status: 'fail',
+        message: 'Invalid amount. Please enter a valid number.',
+      };
+
+      return res.status(400).json(response);
+    }
+
+    var denominations = [
+      { name: '$20 bill', value: 20.0 },
+      { name: '$10 bill', value: 10.0 },
+      { name: '$5 bill', value: 5.0 },
+      { name: '$1 bill', value: 1.0 },
+      { name: '25 cent', value: 0.25 },
+      { name: '10 cent', value: 0.1 },
+      { name: '5 cent', value: 0.05 },
+      { name: '1 cent', value: 0.01 },
+    ];
+
+    let remainingAmount = amount;
+    var result = [];
+
+    denominations.forEach((denomination) => {
+      var count = Math.floor(remainingAmount / denomination.value);
+
+      if (count > 0) {
+        result.push(`${count} X ${denomination.name}${count > 1 ? 's' : ''}`);
+
+        remainingAmount = (
+          remainingAmount -
+          count * denomination.value
+        ).toFixed(2);
+      }
+    });
+
     var response = {
-      status: 'fail',
-      message: 'Invalid amount. Please enter a valid number.',
+      status: 'success',
+      data: result,
     };
 
-    return res.status(400).json(response);
+    res.status(200).json(response);
   }
-
-  var denominations = [
-    { name: '$20 bill', value: 20.0 },
-    { name: '$10 bill', value: 10.0 },
-    { name: '$5 bill', value: 5.0 },
-    { name: '$1 bill', value: 1.0 },
-    { name: '25 cent', value: 0.25 },
-    { name: '10 cent', value: 0.1 },
-    { name: '5 cent', value: 0.05 },
-    { name: '1 cent', value: 0.01 },
-  ];
-
-  let remainingAmount = amount;
-  var result = [];
-
-  denominations.forEach((denomination) => {
-    var count = Math.floor(remainingAmount / denomination.value);
-
-    if (count > 0) {
-      result.push(`${count} X ${denomination.name}${count > 1 ? 's' : ''}`);
-
-      remainingAmount = (remainingAmount - count * denomination.value).toFixed(
-        2
-      );
-    }
-  });
-
-  var response = {
-    status: 'success',
-    data: result,
-  };
-
-  res.status(200).json(response);
-});
-
+);
 
 router.post('/images/upload', uploadUserPhoto, async (req, res) => {
   try {
