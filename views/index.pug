@@ -4,8 +4,10 @@ block content
   #dashboard.grid.grid-cols-4.gap-8
     div
       .dashboard-widget.w-full.bg-white.rounded.mb-8.p-8.flex.flex-col.justify-center.items-center(data-name='weather-display')
+        if weatherError
+          p.text-xl.mb-6.text-red-600.text-center An error occurred while fetching weather data
         img#weatherIcon.mb-6.w-64.h-64(src=weatherIcon alt=weatherDescription)
-        h1#temperature.text-4xl.text-center.font-medium #{temperature} ˚C
+        h1#temperature.text-4xl.text-center.font-medium #{temperature} &deg;C
       .dashboard-widget.w-full.bg-white.rounded.mb-8.text-center.p-8.ease-in-out.hover--scale-120.active--scale-98.cursor-pointer.transform.transition-transform.duration-300(data-name='analytics-display')
         p.text-xl.mb-6 Number of clicks
         h1#analytics-count.text-6xl.text-center.font-medium #{analyticsCount}

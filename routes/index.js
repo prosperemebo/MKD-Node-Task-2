@@ -40,25 +40,27 @@ const uploadUserPhoto = upload.single('image');
 
 /* GET home page. */
 router.get('/', async function (req, res, next) {
-  if (!req.session.authenticated) {
-    return res.redirect('/2fa/setup');
-  } 
+  // if (!req.session.authenticated) {
+  //   return res.redirect('/2fa/setup');
+  // } 
 
   try {
-    var weatherData = await weatherUtils.getWeather(req.ip);
-
+    // Timezones
     var { london, est, nigeria, pakistan } = timeUtils.getTimezones();
-
-    var condition = weatherData.current?.condition;
-
-    var weatherIcon = `https:${condition.icon}`;
-    var temperature = weatherData.current?.temp_c;
 
     var nigeriaTime = timeUtils.formatTime(nigeria);
     var pakistanTime = timeUtils.formatTime(pakistan);
     var londonTime = timeUtils.formatTime(london);
     var estTime = timeUtils.formatTime(est);
+    
+    // Weather
+    var weatherData = await weatherUtils.getWeather(req.ip);
+    var condition = weatherData?.current?.condition || 'Error';
 
+    var weatherIcon = condition.icon ? `https:${condition.icon}` : '/images/weather-error.webp';
+    var temperature = weatherData?.current?.temp_c || '0.00';
+
+    // Analytics
     var analyticsCount = await Analytic.count();
 
     res.render('index', {
@@ -71,6 +73,7 @@ router.get('/', async function (req, res, next) {
       pakistanTime,
       londonTime,
       estTime,
+      weatherError: !weatherData,
     });
   } catch (error) {
     console.error('Error fetching data from API:', error);
@@ -97,6 +100,15 @@ router.get('/timezones', (req, res) => {
 router.get('/weather', async function (req, res, next) {
   try {
     var weatherData = await weatherUtils.getWeather(req.ip);
+
+    if (!weatherData) {
+      var response = {
+        status: 'fail',
+        message: 'Unable to get weather data at this time!'
+      };
+  
+      res.status(500).json(response);  
+    }
 
     var response = {
       status: 'success',
