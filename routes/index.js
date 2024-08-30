@@ -10,6 +10,7 @@ var { Op } = require('sequelize');
 var { Airport, Analytic, Image } = require('../models');
 var { analyticsRateLimiter } = require('../utils/rate-limiter');
 var { getPopularPosts } = require('../utils/reddit');
+var { encode } = require('html-entities');
 
 var router = express.Router();
 
@@ -157,6 +158,9 @@ router.get('/airports', async (req, res) => {
 
 router.post('/analytic', analyticsRateLimiter, async (req, res) => {
   var { widget_name, browser_type } = req.body;
+
+  widget_name = encode(widget_name);
+  browser_type = encode(browser_type);
 
   try {
     var analytic = await Analytic.create({
