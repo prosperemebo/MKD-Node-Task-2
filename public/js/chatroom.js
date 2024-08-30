@@ -16,7 +16,7 @@ async function fetchMessages() {
   chatsContainer.innerHTML = '';
 
   data.messages.forEach((msg) => {
-	let messageElement = TEMPLATE.replace(':MESSAGE', msg)
+	let messageElement = TEMPLATE.replace(':MESSAGE', msg?.message?.message)
 
 	chatsContainer.insertAdjacentHTML("afterbegin", messageElement)
   });
